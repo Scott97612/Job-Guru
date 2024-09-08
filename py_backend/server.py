@@ -6,8 +6,7 @@ import logging
 
 from pdf_extract import pdf_to_text
 from ocr import img2text
-from agents import Gemini_Agent
-from agents import GPT_Agent
+from agents import Gemini_Agent, GPT_Agent
 
 logging.basicConfig(level=logging.DEBUG)
 FRONTEND_ENDPOINT = "http://localhost:5173"
