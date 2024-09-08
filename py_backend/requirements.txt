@@ -1,0 +1,10 @@
+langchain-google-genai >= 1.0.10
+langchain-openai >= 0.1.23
+pytesseract >= 0.3.13
+opencv-python >= 4.10.0.84
+pdfminer.six
+langchain >= 0.2.16
+Flask>=3.0.2
+Flask-Cors>=5.0.0
+Flask-SocketIO>=5.3.7
+python-dotenv
