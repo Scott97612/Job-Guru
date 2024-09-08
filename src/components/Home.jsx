@@ -1,8 +1,21 @@
 import { Upload, Image } from 'lucide-react'
+import { useState } from 'react'
 
 export default function Home(props) {
     // eslint-disable-next-line react/prop-types
     const {setType, setProfile, setCompanyDescription, setCompanyDescriptionImage, setJobDescription, setJobDescriptionImage, setUserRequests, setModel} = props;
+
+    const [profileFileName, setProfileFileName] = useState('');
+    const [companyImageFileName, setCompanyImageFileName] = useState('');
+    const [jobImageFileName, setJobImageFileName] = useState('');
+
+    const handleFileChange = (e, setter, fileNameSetter) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            setter(file);
+            fileNameSetter(file.name);
+        }
+    };
 
     return (
         <div className="min-h-screen p-4 sm:p-6 lg:p-8">
@@ -34,11 +47,17 @@ export default function Home(props) {
                     id="profile-upload"
                     type="file"
                     accept=".pdf"
-                    onChange={(e) => setProfile(e.target.files[0])}
+                    onChange={(e) => handleFileChange(e, setProfile, setProfileFileName)}
                     className="hidden"
                     />
-                    <Upload className="mr-2 text-gray-400" size={24} />
-                    <span className="text-sm text-gray-500">Choose PDF file</span>
+                    {profileFileName ? (
+                        <span className="text-sm text-gray-500">{profileFileName}</span>
+                    ) : (
+                        <>
+                            <Upload className="mr-2 text-gray-400" size={24} />
+                            <span className="text-sm text-gray-500">Choose PDF file</span>
+                        </>
+                    )}
                 </label>
                 </div>
             </div>
@@ -60,10 +79,14 @@ export default function Home(props) {
                     <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => setCompanyDescriptionImage(e.target.files[0])}
+                        onChange={(e) => handleFileChange(e, setCompanyDescriptionImage, setCompanyImageFileName)}
                         className="hidden"
                     />
-                    <Image size={20} className="text-gray-400" />
+                    {companyImageFileName ? (
+                        <span className="text-sm text-gray-500">{companyImageFileName}</span>
+                    ) : (
+                        <Image size={20} className="text-gray-400" />
+                    )}
                     </label>
                 </div>
                 </div>
@@ -82,10 +105,14 @@ export default function Home(props) {
                     <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => setJobDescriptionImage(e.target.files[0])}
+                        onChange={(e) => handleFileChange(e, setJobDescriptionImage, setJobImageFileName)}
                         className="hidden"
                     />
-                    <Image size={20} className="text-gray-400" />
+                    {jobImageFileName ? (
+                        <span className="text-sm text-gray-500">{jobImageFileName}</span>
+                    ) : (
+                        <Image size={20} className="text-gray-400" />
+                    )}
                     </label>
                 </div>
                 </div>
