@@ -40,7 +40,7 @@ class Gemini_Agent():
             model=model_name,
             temperature=0.8,
             max_tokens=8192,
-            top_p=0.9)
+            top_p=0.95)
 
         self.prompt = Template()
         self.chain = RunnablePassthrough() | self.prompt.prompt_template | self.model | StrOutputParser()
@@ -61,8 +61,8 @@ class GPT_Agent():
             api_key=self.api_key,
             model=model_name,
             temperature=0.8,
-            max_tokens=8192,
-            top_p=0.9)
+            max_tokens=4096,
+            top_p=0.95)
 
         self.prompt = Template()
         self.chain = RunnablePassthrough() | self.prompt.prompt_template | self.model | StrOutputParser()
