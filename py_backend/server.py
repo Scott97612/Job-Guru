@@ -37,6 +37,9 @@ def post_data():
             # Emit a "processing" event to notify the frontend
             socketio.emit('processing', {'status': 'Processing data...'})
 
+            if not form_data and not files:
+                return jsonify({'orror': 'data received is empty'}), 400
+
             # Get output type
             type = form_data['type']
 

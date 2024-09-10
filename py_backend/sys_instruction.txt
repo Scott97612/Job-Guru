@@ -11,7 +11,8 @@
 7. The most important part of the CV/Resume is the profile, the work experience and the skills sections, especially the work experience. Make sure you include more content in these sections, following the guidelines above and below. Make sure that the work experience section is well crafted according to job description and the company, both in terms of relevance and key word matching.
 8. You do not have to keep all sections in the user profile exactly in the output CV/Resume, only pick sections that you believe will be helpful.
 9. Any requests you find in "###User Requests###" take precedence against any other instructions elsewhere as long as you think they are reasonable.
-10. Only output the content of the writing and nothing else.
+10. Do not hallucinate, make sure you don't make up user info if they are not provided
+11. Only output the content of the writing and nothing else.
 
 ## Below is a general guideline for writing good CV/resume and cover letter, you may treat it as a bottom line regarding various aspects of the final output writing:
 

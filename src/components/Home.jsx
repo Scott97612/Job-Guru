@@ -1,12 +1,24 @@
 import { Upload } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Home(props) {
-    // eslint-disable-next-line react/prop-types
     const {setType, setProfile, setCompanyDescription, setCompanyDescriptionImage, setJobDescription, setJobDescriptionImage, setUserRequests, setModel, formSubmit} = props;
     const [profileFileName, setProfileFileName] = useState('');
     const [companyImageFileName, setCompanyImageFileName] = useState('');
     const [jobImageFileName, setJobImageFileName] = useState('');
+    const [localType, setLocalType] = useState('CV/Resume');
+    const [localCompanyDescription, setLocalCompanyDescription] = useState('');
+    const [localJobDescription, setLocalJobDescription] = useState('');
+    const [localUserRequests, setLocalUserRequests] = useState('');
+    const [localModel, setLocalModel] = useState('Gemini-1.5-Flash');
+
+    useEffect(() => {
+        setType(localType);
+        setCompanyDescription(localCompanyDescription);
+        setJobDescription(localJobDescription);
+        setUserRequests(localUserRequests);
+        setModel(localModel);
+    }, [localType, localCompanyDescription, localJobDescription, localUserRequests, localModel, setType, setCompanyDescription, setJobDescription, setUserRequests, setModel]);
 
     const handleFileChange = (e, setter, fileNameSetter) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -26,17 +38,17 @@ export default function Home(props) {
     return (
         <div className="p-4 sm:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto">
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white p-6 rounded-lg shadow-md col-span-2">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div className="bg-white p-6 rounded-lg shadow-md col-span-1 lg:col-span-2">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Company Description */}
-                            <div>
+                            <div className="w-full">
                                 <h2 className="text-xl font-semibold mb-4 text-orange-500">Company Introduction</h2>
                                 <div className="mb-4">
                                     <textarea
                                         placeholder="Enter company name with optional introduction"
-                                        onChange={(e) => setCompanyDescription(e.target.value)}
+                                        value={localCompanyDescription}
+                                        onChange={(e) => setLocalCompanyDescription(e.target.value)}
                                         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                         rows={6}
                                         style={{resize: 'none', overflow: 'auto'}}
@@ -75,12 +87,13 @@ export default function Home(props) {
                             </div>
 
                             {/* Job Description */}
-                            <div>
+                            <div className="w-full">
                                 <h2 className="text-xl font-semibold mb-4 text-orange-500">Job Description</h2>
                                 <div className="mb-4">
                                     <textarea
                                         placeholder="Enter job description"
-                                        onChange={(e) => setJobDescription(e.target.value)}
+                                        value={localJobDescription}
+                                        onChange={(e) => setLocalJobDescription(e.target.value)}
                                         className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                         rows={6}
                                         style={{resize: 'none', overflow: 'auto'}}
@@ -128,7 +141,8 @@ export default function Home(props) {
                             <textarea
                                 id="user-requests"
                                 placeholder="Enter any additional requests"
-                                onChange={(e) => setUserRequests(e.target.value)}
+                                value={localUserRequests}
+                                onChange={(e) => setLocalUserRequests(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                 rows={8}
                                 style={{resize: 'none', overflow: 'auto'}}
@@ -145,7 +159,8 @@ export default function Home(props) {
                             <label htmlFor="type-select" className="block text-sm font-medium text-gray-700 mb-1">Writing Type</label>
                             <select
                                 id="type-select"
-                                onChange={(e) => setType(e.target.value)}
+                                value={localType}
+                                onChange={(e) => setLocalType(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                             >
                                 <option value="CV/Resume">CV/Resume</option>
@@ -190,7 +205,8 @@ export default function Home(props) {
                             <label htmlFor="model-select" className="block text-sm font-medium text-gray-700 mb-1">Select Model</label>
                             <select
                                 id="model-select"
-                                onChange={(e) => setModel(e.target.value)}
+                                value={localModel}
+                                onChange={(e) => setLocalModel(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                             >
                                 <option value="Gemini-1.5-Flash">Gemini-1.5-Flash</option>
