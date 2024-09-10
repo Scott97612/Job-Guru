@@ -75,7 +75,7 @@ function App() {
         const formattedResult = result.slice(15, result.length - 4);
         const md = new MarkdownIt();
         const parsedMarkdown = md.render(formattedResult);
-        const sanitizedHTML = DOMPurify.sanitize(parsedMarkdown).replace(/\\n/g, '<br>').replace(/---/g, '<hr>');
+        const sanitizedHTML = DOMPurify.sanitize(parsedMarkdown).replace(/\\n/g, '<br>').replace(/---/g, '<hr>').replace(/\\u/g, '-').replace(/###/g, '');
         setOutput(<div className=" flex flex-col bg-white shadow-lg rounded-lg max-w-[1300px] mx-auto p-4" id="content" 
            dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />);
       } catch (error) {

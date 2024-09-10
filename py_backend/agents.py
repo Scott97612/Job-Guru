@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
@@ -38,7 +39,7 @@ class Gemini_Agent():
         self.model = ChatGoogleGenerativeAI(
             api_key=self.api_key,
             model=model_name,
-            temperature=0.8,
+            temperature=0.7,
             max_tokens=8192,
             top_p=0.95)
 
@@ -60,7 +61,29 @@ class GPT_Agent():
         self.model = ChatOpenAI(
             api_key=self.api_key,
             model=model_name,
-            temperature=0.8,
+            temperature=0.7,
+            max_tokens=4096,
+            top_p=0.95)
+
+        self.prompt = Template()
+        self.chain = RunnablePassthrough() | self.prompt.prompt_template | self.model | StrOutputParser()
+
+    def write(self, type, profile, company, job_description, user_request):
+        return self.chain.invoke(
+            {'type': type,
+             'profile': profile, 
+             'company': company,
+             'job_description': job_description,
+             'user_request' : user_request, })
+    
+class Claude_Agent():
+    def __init__(self, model_name):
+        load_dotenv()
+        self.api_key = os.environ["CLAUDE_API_KEY"]
+        self.model = ChatAnthropic(
+            api_key=self.api_key,
+            model=model_name,
+            temperature=0.7,
             max_tokens=4096,
             top_p=0.95)
 

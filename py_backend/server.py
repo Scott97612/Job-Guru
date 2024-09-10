@@ -6,7 +6,7 @@ import logging
 
 from pdf_extract import pdf_to_text
 from ocr import img2text
-from agents import Gemini_Agent, GPT_Agent
+from agents import Gemini_Agent, GPT_Agent, Claude_Agent
 
 logging.basicConfig(level=logging.DEBUG)
 FRONTEND_ENDPOINT = "http://localhost:5173"
@@ -20,9 +20,9 @@ output_cache = []
 
 model_dict = {
     'Gemini-1.5-Flash': 'gemini-1.5-flash',
-    'Gemini-1.5-Pro': 'gemini-1.5-pro',
     'GPT-4o': 'gpt-4o',
     'GPT-4o-mini': 'gpt-4o-mini',
+    'Claude-Sonnet-3.5': 'claude-3-5-sonnet-20240620'
 }
 
 @app.route('/api-post-data', methods=['POST'])
@@ -78,18 +78,20 @@ def post_data():
             # Get model name text
             model = form_data['model_name']
 
+            # logging.debug(type, company_description_text[:50], job_description_text[:50], profile_text[:50], user_request, model)
+
             # Run the correct model
             if model == 'Gemini-1.5-Flash':
                 agent = Gemini_Agent(model_name=model_dict['Gemini-1.5-Flash'])
-                output = agent.write(type=type, profile=profile_text, company=company_description_text, job_description=job_description_text, user_request=user_request)
-            elif model == 'Gemini-1.5-Pro':
-                agent = GPT_Agent(model_name=model_dict['Gemini-1.5-Pro'])
                 output = agent.write(type=type, profile=profile_text, company=company_description_text, job_description=job_description_text, user_request=user_request)
             elif model == 'GPT-4o':
                 agent = GPT_Agent(model_name=model_dict['GPT-4o'])
                 output = agent.write(type=type, profile=profile_text, company=company_description_text, job_description=job_description_text, user_request=user_request)
             elif model == 'GPT-4o-mini':
                 agent = GPT_Agent(model_name=model_dict['GPT-4o-mini'])
+                output = agent.write(type=type, profile=profile_text, company=company_description_text, job_description=job_description_text, user_request=user_request)
+            elif model == 'Claude-Sonnet-3.5':
+                agent = Claude_Agent(model_name=model_dict['Claude-Sonnet-3.5'])
                 output = agent.write(type=type, profile=profile_text, company=company_description_text, job_description=job_description_text, user_request=user_request)
 
             output_cache.append(output)

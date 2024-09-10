@@ -1,5 +1,6 @@
 langchain-google-genai >= 1.0.10
 langchain-openai >= 0.1.23
+langchain-anthropic >= 0.1.23
 pytesseract >= 0.3.13
 opencv-python >= 4.10.0.84
 pdfminer.six

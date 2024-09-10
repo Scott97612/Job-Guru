@@ -194,9 +194,9 @@ export default function Home(props) {
                                 className="w-full p-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                             >
                                 <option value="Gemini-1.5-Flash">Gemini-1.5-Flash</option>
-                                <option value="Gemini-1.5-Pro">Gemini-1.5-Pro</option>
                                 <option value="GPT-4o">GPT-4o</option>
                                 <option value="GPT-4o-mini">GPT-4o-mini</option>
+                                <option value="Claude-Sonnet-3.5">Claude-Sonnet-3.5</option>
                             </select>
                         </div>
                     </div>
