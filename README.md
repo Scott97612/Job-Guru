@@ -8,8 +8,15 @@ Helps you write CV/Resume and Cover Letter with LLMs based on materials user pro
 
 ## How to use
 
-`cd py_backend`
+This app use tesseract for image2text extraction. In order to use this feature, you have to first install tesseract.
 
+For MacOs, better use Homebrew: `brew install tesseract`
+
+For Ubuntu: `sudo apt install tesseract-ocr`
+
+For Windows: check here https://tesseract-ocr.github.io/tessdoc/Downloads.html
+
+`cd py_backend`
 
 `pip install -r requirements.txt`
 
