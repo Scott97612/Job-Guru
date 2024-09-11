@@ -124,7 +124,7 @@ def reset():
     if 'action' in request.form and request.form['action'] == 'reset':
         # reset backend data
         output_cache = []
-        # logging.debug(f'Here are data lists: {translation_result}, {transcription_result}')
+        # logging.debug(f'Here are data lists: {output_cache}')
         return jsonify({'message': "Data reset successfully"}), 200 
     else:
         return jsonify({"message": "No data received"}), 400 
