@@ -178,6 +178,21 @@ function App() {
     console.log('Reset response:', data);
   }, []);
 
+  useEffect(() => {
+    // Attach the event listener when the component mounts
+    const clearLocalStorageOnRefresh = () => {
+      // Clear localStorage when the page is refreshed
+      localStorage.clear();
+    };
+
+    window.addEventListener('beforeunload', clearLocalStorageOnRefresh);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('beforeunload', clearLocalStorageOnRefresh);
+    };
+  }, []);
+
   return (
     <div className='flex flex-col mx-auto w-full'>
       <section className='min-h-screen flex flex-col'>

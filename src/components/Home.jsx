@@ -3,14 +3,16 @@ import { useState, useEffect } from 'react'
 
 export default function Home(props) {
     const {setType, setProfile, setCompanyDescription, setCompanyDescriptionImage, setJobDescription, setJobDescriptionImage, setUserRequests, setModel, formSubmit} = props;
-    const [profileFileName, setProfileFileName] = useState('');
-    const [companyImageFileName, setCompanyImageFileName] = useState('');
-    const [jobImageFileName, setJobImageFileName] = useState('');
-    const [localType, setLocalType] = useState('CV/Resume');
-    const [localCompanyDescription, setLocalCompanyDescription] = useState('');
-    const [localJobDescription, setLocalJobDescription] = useState('');
-    const [localUserRequests, setLocalUserRequests] = useState('');
-    const [localModel, setLocalModel] = useState('Gemini-1.5-Flash');
+
+    const [localType, setLocalType] = useState(() => localStorage.getItem('type') || 'CV/Resume');
+    const [localCompanyDescription, setLocalCompanyDescription] = useState(() => localStorage.getItem('companyDescription') || '');
+    const [localJobDescription, setLocalJobDescription] = useState(() => localStorage.getItem('jobDescription') || '');
+    const [localUserRequests, setLocalUserRequests] = useState(() => localStorage.getItem('userRequests') || '');
+    const [localModel, setLocalModel] = useState(() => localStorage.getItem('model') || 'Gemini-1.5-Flash');
+
+    const [profileFileName, setProfileFileName] = useState(() => localStorage.getItem('profileFileName') || '');
+    const [companyImageFileName, setCompanyImageFileName] = useState(() => localStorage.getItem('companyImageFileName') || '');
+    const [jobImageFileName, setJobImageFileName] = useState(() => localStorage.getItem('jobImageFileName') || '');
 
     useEffect(() => {
         setType(localType);
@@ -18,7 +20,16 @@ export default function Home(props) {
         setJobDescription(localJobDescription);
         setUserRequests(localUserRequests);
         setModel(localModel);
-    }, [localType, localCompanyDescription, localJobDescription, localUserRequests, localModel, setType, setCompanyDescription, setJobDescription, setUserRequests, setModel]);
+
+        localStorage.setItem('type', localType);
+        localStorage.setItem('companyDescription', localCompanyDescription);
+        localStorage.setItem('jobDescription', localJobDescription);
+        localStorage.setItem('userRequests', localUserRequests);
+        localStorage.setItem('model', localModel);
+        localStorage.setItem('profileFileName', profileFileName);
+        localStorage.setItem('companyImageFileName', companyImageFileName);
+        localStorage.setItem('jobImageFileName', jobImageFileName);
+    }, [localType, localCompanyDescription, localJobDescription, localUserRequests, localModel, profileFileName, companyImageFileName, jobImageFileName, setType, setCompanyDescription, setJobDescription, setUserRequests, setModel]);
 
     const handleFileChange = (e, setter, fileNameSetter) => {
         if (e.target.files && e.target.files.length > 0) {
