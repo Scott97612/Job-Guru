@@ -9,7 +9,7 @@ from ocr import img2text
 from agents import Gemini_Agent, GPT_Agent, Claude_Agent
 
 logging.basicConfig(level=logging.DEBUG)
-FRONTEND_ENDPOINT = "http://localhost:5173"
+FRONTEND_ENDPOINT = "http://34.224.79.21:5173"
 upload_folder = 'uploads'
 
 app = Flask(__name__)
@@ -130,4 +130,4 @@ def reset():
         return jsonify({"message": "No data received"}), 400 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000)

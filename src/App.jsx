@@ -9,7 +9,7 @@ import Header from './components/Header'
 
 function App() {
 
-  const BACKEND_ENDPOINT = 'http://localhost:5000'
+  const BACKEND_ENDPOINT = 'http://34.224.79.21:5000'
   const socketRef = useRef(null);
   const isProcessingRef = useRef(false);
   const [renderedComponent, setRenderedComponent] = useState(null);
