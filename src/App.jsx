@@ -129,6 +129,7 @@ function App() {
   const Reset = useCallback(async () => {
     setProcessing(false);
     setOutput(null);
+    localStorage.clear();
     const formData = new FormData();
     formData.append('action', 'reset');
     console.log('Sending reset request with session ID:', sessionId);
@@ -142,6 +143,30 @@ function App() {
     const data = await response.json();
     console.log('Reset response:', data);
   }, [sessionId]);
+
+  useEffect(() => {
+    const clearLocalStorageOnRefresh = () => {
+      const navigationEntries = performance.getEntriesByType('navigation');
+      if (navigationEntries.length > 0 && navigationEntries[0].type === 'reload') {
+        localStorage.clear();
+      }
+    };
+
+    // Run once on mount to handle the initial page load
+    clearLocalStorageOnRefresh();
+
+    // Add event listener for subsequent refreshes
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) {
+        clearLocalStorageOnRefresh();
+      }
+    });
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('pageshow', clearLocalStorageOnRefresh);
+    };
+  }, []);
 
   const renderedComponent = output ? <Output output={output}/> :
                             processing ? <Writing/> :
