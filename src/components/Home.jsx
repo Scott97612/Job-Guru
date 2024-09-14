@@ -1,6 +1,35 @@
 import { Upload } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
+// Custom Tooltip component with flatter rectangle style
+const Tooltip = ({ children, content }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <div className="relative inline-block">
+      <div
+        onMouseEnter={() => setIsVisible(true)}
+        onMouseLeave={() => setIsVisible(false)}
+      >
+        {children}
+      </div>
+      {isVisible && (
+        <div className="absolute z-10 px-3 py-1 text-sm font-medium text-white bg-gray-900 rounded-md shadow-sm tooltip dark:bg-gray-700 whitespace-nowrap"
+             style={{ bottom: '100%', left: '50%', transform: 'translateX(-50%)', maxWidth: '1000px' }}>
+          {content}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// InfoIcon component using the custom Tooltip
+const InfoIcon = ({ tooltip }) => (
+  <Tooltip content={tooltip}>
+    <i className="fa-solid fa-circle-question text-gray-400 hover:text-gray-600 ml-2 cursor-help"></i>
+  </Tooltip>
+);
+
 export default function Home(props) {
     const {setType, setProfile, setCompanyDescription, setCompanyDescriptionImage, setJobDescription, setJobDescriptionImage, setUserRequests, setModel, formSubmit} = props;
 
@@ -54,7 +83,10 @@ export default function Home(props) {
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             {/* Company Description */}
                             <div className="w-full">
-                                <h2 className="text-xl font-semibold mb-4 text-orange-500">Company Introduction</h2>
+                                <h2 className="text-xl font-semibold mb-4 text-orange-500 flex items-center">
+                                    Company Introduction
+                                    <InfoIcon tooltip="Provide a brief introduction to the company you're applying to. No need for well-known companies." />
+                                </h2>
                                 <div className="mb-4">
                                     <textarea
                                         placeholder="Enter company name with optional introduction"
@@ -99,7 +131,10 @@ export default function Home(props) {
 
                             {/* Job Description */}
                             <div className="w-full">
-                                <h2 className="text-xl font-semibold mb-4 text-orange-500">Job Description</h2>
+                                <h2 className="text-xl font-semibold mb-4 text-orange-500 flex items-center">
+                                    Job Description
+                                    <InfoIcon tooltip="Enter the job description or key requirements for the position you're applying for." />
+                                </h2>
                                 <div className="mb-4">
                                     <textarea
                                         placeholder="Enter job description"
@@ -146,7 +181,10 @@ export default function Home(props) {
 
                     {/* Additional User Requests */}
                     <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold mb-4 text-orange-500">Additional Information</h2>
+                        <h2 className="text-xl font-semibold mb-4 text-orange-500 flex items-center">
+                            Additional Information
+                            <InfoIcon tooltip="Add any additional custom requests, Guru would prioritize them." />
+                        </h2>
                         <div className="mb-4">
                             <label htmlFor="user-requests" className="block text-sm font-medium text-gray-700 mb-1">Additional Requests</label>
                             <textarea
@@ -167,7 +205,10 @@ export default function Home(props) {
                         
                         {/* Type Selection */}
                         <div className="mb-4">
-                            <label htmlFor="type-select" className="block text-sm font-medium text-gray-700 mb-1">Writing Type</label>
+                            <label htmlFor="type-select" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                Writing Type
+                                <InfoIcon tooltip="Choose the type of document you want to create." />
+                            </label>
                             <select
                                 id="type-select"
                                 value={localType}
@@ -181,7 +222,10 @@ export default function Home(props) {
 
                         {/* Profile Upload */}
                         <div className="mb-4">
-                            <label htmlFor="profile-upload" className="block text-sm font-medium text-gray-700 mb-1">Upload Profile (PDF)</label>
+                            <label htmlFor="profile-upload" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                Upload Profile (PDF)
+                                <InfoIcon tooltip="Upload your profile in PDF format. Try export a PDF profile from your LinkedIn." />
+                            </label>
                             <div className="relative">
                                 <input
                                     id="profile-upload"
@@ -213,7 +257,10 @@ export default function Home(props) {
 
                         {/* Model Selection */}
                         <div>
-                            <label htmlFor="model-select" className="block text-sm font-medium text-gray-700 mb-1">Select Model</label>
+                            <label htmlFor="model-select" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                                Select Model
+                                <InfoIcon tooltip="Choose the AI model to use for generating your document." />
+                            </label>
                             <select
                                 id="model-select"
                                 value={localModel}

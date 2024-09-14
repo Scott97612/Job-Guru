@@ -20,7 +20,7 @@ export default function Output(props) {
   return(
     <div>
       {output}
-      <div className='flex flex-col items-center mx-auto text-lg pt-6 pb-4 gap-3'> 
+      <div className='flex flex-col items-center mx-3 text-lg pt-6 pb-4 gap-3 py-3'> 
         <button onClick={handleDownload} title='Download as PDF' className='bg-transparent px-4 hover:text-orange-400 flex justify-center mx-auto gap-2 items-center'>
           <h3>Download as PDF</h3>
           <i className="fa-solid fa-download"></i>

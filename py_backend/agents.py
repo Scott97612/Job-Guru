@@ -7,7 +7,6 @@ from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTempla
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
 
-
 def read_sys_instruction():
     with open('sys_instruction.txt', 'r') as f:
         text = f.read()

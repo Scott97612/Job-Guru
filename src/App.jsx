@@ -1,5 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
-import io from 'socket.io-client';
+import { useState, useCallback, useEffect } from 'react'
 import DOMPurify from 'dompurify';
 import MarkdownIt from 'markdown-it';
 import Home from './components/Home'
@@ -8,16 +7,10 @@ import Output from './components/Output'
 import Header from './components/Header'
 
 function App() {
-
-  const BACKEND_ENDPOINT = 'http://34.224.79.21:5000'
-  const socketRef = useRef(null);
-  const isProcessingRef = useRef(false);
-  const [renderedComponent, setRenderedComponent] = useState(null);
-
+  const BACKEND_ENDPOINT = 'http://localhost:5000'
+  const [sessionId, setSessionId] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [outputAvailable, setOutputAvailable] = useState(false);
   const [output, setOutput] = useState(null);
-  // type selection set a default value
   const [type, setType] = useState('CV/Resume');
   const [profile, setProfile] = useState(null);
   const [companyDescription, setCompanyDescription] = useState(null);
@@ -25,90 +18,75 @@ function App() {
   const [jobDescription, setJobDescription] = useState(null);
   const [jobDescriptionImage, setJobDescriptionImage] = useState(null);
   const [userRequests, setUserRequests] = useState(null);
-  // model selection set a default value
   const [model, setModel] = useState('Gemini-1.5-Flash');
 
-  // Set up socket connection
   useEffect(() => {
-    socketRef.current = io(BACKEND_ENDPOINT);
-
-    socketRef.current.on('connect', () => {
-      console.log('Socket connected');
-    });
-
-    socketRef.current.on('disconnect', () => {
-      console.log('Socket disconnected');
-    });
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-    };
+    setSessionId(Math.random().toString(36).substring(2, 15));
   }, []);
 
-  // Set up event listeners
-  useEffect(() => {
-    if (!socketRef.current) return;
-
-    const onProcessing = (data) => {
-      console.log('Processing event received:', data.status);
-      isProcessingRef.current = true;
-      setProcessing(true);             
-    };
-
-    const onComplete = async () => {
-      console.log('Writing complete');
-      isProcessingRef.current = false;
-      setProcessing(false);
-      setOutputAvailable(true);
-
-      try {
-        const response = await fetch(`${BACKEND_ENDPOINT}/api-get-output`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-        }
-        });
-        const result = await response.text();
-        console.log(result)
-        const formattedResult = result.slice(15, result.length - 4);
-        const md = new MarkdownIt();
-        const parsedMarkdown = md.render(formattedResult);
-        const sanitizedHTML = DOMPurify.sanitize(parsedMarkdown).replace(/\\n/g, '<br>').replace(/---/g, '<hr>').replace(/\\u/g, '-').replace(/###/g, '');
-        setOutput(<div className=" flex flex-col bg-white shadow-lg rounded-lg max-w-[1300px] mx-auto p-4" id="content" 
-           dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />);
-      } catch (error) {
-        console.error('Error fetching content:', error);
-      }
-    };
-
-    const onError = (data) => {
-      console.error('Error event received:', data.status);
-      isProcessingRef.current = false;
-      setProcessing(false);
-    };
-
-    socketRef.current.on('processing', onProcessing);
-    socketRef.current.on('complete', onComplete);
-    socketRef.current.on('error', onError);
-
-    return () => {
-      socketRef.current.off('processing', onProcessing);
-      socketRef.current.off('complete', onComplete);
-      socketRef.current.off('error', onError);
-    };
-  }, []);
-
-  const formSubmit = useCallback(async () => {
-    if (!type && !companyDescription && !companyDescriptionImage && !jobDescription && !jobDescriptionImage && !userRequests && !model) return;
-    if (isProcessingRef.current) {
-      console.log('Already processing, please wait');
-      return;
-    }
+  const checkJobStatus = useCallback(async () => {
+    if (!sessionId) return;
 
     try {
-      
+      const response = await fetch(`${BACKEND_ENDPOINT}/api-get-output`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Session-ID': sessionId
+        }
+      });
+
+      if (response.status === 202) {
+        // Job still processing
+        return false;
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (result.output) {
+        const md = new MarkdownIt();
+        const parsedMarkdown = md.render(result.output);
+        const sanitizedHTML = DOMPurify.sanitize(parsedMarkdown)
+          .replace(/\\n/g, '<br>')
+          .replace(/---/g, '<hr>')
+          .replace(/\\u/g, '-')
+          .replace(/###/g, '');
+        setOutput(<div className="flex flex-col bg-white shadow-lg rounded-lg max-w-[1300px] mx-auto p-4" id="content" 
+           dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />);
+        setProcessing(false);
+        return true;
+      }
+    } catch (error) {
+      console.error('Error checking job status:', error);
+      setProcessing(false);
+    }
+    return false;
+  }, [sessionId]);
+
+  useEffect(() => {
+    let intervalId;
+    if (processing) {
+      intervalId = setInterval(async () => {
+        const jobComplete = await checkJobStatus();
+        if (jobComplete) {
+          clearInterval(intervalId);
+        }
+      }, 2000); // Poll every 2 seconds
+    }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [processing, checkJobStatus]);
+
+  const formSubmit = useCallback(async () => {
+    if (!sessionId) return;
+    
+    try {
       const formData = new FormData();
       formData.append('type', type);
       formData.append('pdf', profile || null);
@@ -120,78 +98,60 @@ function App() {
       formData.append('model_name', model);
 
       setProcessing(true);
+      setOutput(null);
 
-      // for (let pair of formData.entries()) {
-      //   console.log(pair[0] + ': ' + pair[1]);
-      // }
-
+      console.log('Sending POST request with session ID:', sessionId);
       const response = await fetch(`${BACKEND_ENDPOINT}/api-post-data`, {
         method: 'POST',
         body: formData,
+        headers: {
+          'X-Session-ID': sessionId
+        }
       });
       
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       console.log('Upload response:', data);
 
-      // Wait for processing to complete
-      await new Promise((resolve) => {
-        const checkProcessing = setInterval(() => {
-          if (!isProcessingRef.current) {
-            clearInterval(checkProcessing);
-            resolve();
-          }
-        }, 100);
-      });
+      if (data.message !== 'Data processing started') {
+        throw new Error('Unexpected response from server');
+      }
 
     } catch (error) {
       console.error('Error uploading data:', error);
       setProcessing(false);
     }
-  }, [type, profile, jobDescription, jobDescriptionImage, companyDescription, companyDescriptionImage, userRequests, model]);
-
-  useEffect(() => {
-    if (outputAvailable) {
-      setRenderedComponent(<Output output={output}/>);
-    }
-    else if (processing) {
-      setRenderedComponent(<Writing/>)
-    }
-    else {
-      setRenderedComponent(<Home setType={setType} setProfile={setProfile} setCompanyDescription={setCompanyDescription}
-        setCompanyDescriptionImage={setCompanyDescriptionImage} setJobDescription={setJobDescription}
-        setJobDescriptionImage={setJobDescriptionImage} setUserRequests={setUserRequests} 
-        setModel={setModel} formSubmit={formSubmit}/>)
-    }
-  }, [formSubmit, output, outputAvailable, processing])
+  }, [sessionId, type, profile, jobDescription, jobDescriptionImage, companyDescription, companyDescriptionImage, userRequests, model]);
 
   const Reset = useCallback(async () => {
     setProcessing(false);
-    setOutputAvailable(false);
-    // reset the backend data as well
+    setOutput(null);
     const formData = new FormData();
     formData.append('action', 'reset');
-    const response = await fetch(`${BACKEND_ENDPOINT}/reset`, {
+    console.log('Sending reset request with session ID:', sessionId);
+    const response = await fetch(`${BACKEND_ENDPOINT}/api-reset`, {
       method: 'POST',
       body: formData,
+      headers: {
+        'X-Session-ID': sessionId
+      }
     });
     const data = await response.json();
     console.log('Reset response:', data);
-  }, []);
+  }, [sessionId]);
 
-  useEffect(() => {
-    // Attach the event listener when the component mounts
-    const clearLocalStorageOnRefresh = () => {
-      // Clear localStorage when the page is refreshed
-      localStorage.clear();
-    };
-
-    window.addEventListener('beforeunload', clearLocalStorageOnRefresh);
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      window.removeEventListener('beforeunload', clearLocalStorageOnRefresh);
-    };
-  }, []);
+  const renderedComponent = output ? <Output output={output}/> :
+                            processing ? <Writing/> :
+                            <Home setType={setType} setProfile={setProfile} 
+                                  setCompanyDescription={setCompanyDescription}
+                                  setCompanyDescriptionImage={setCompanyDescriptionImage} 
+                                  setJobDescription={setJobDescription}
+                                  setJobDescriptionImage={setJobDescriptionImage} 
+                                  setUserRequests={setUserRequests} 
+                                  setModel={setModel} formSubmit={formSubmit}/>;
 
   return (
     <div className='flex flex-col mx-auto w-full'>
@@ -202,6 +162,5 @@ function App() {
     </div>
   )
 }
-
 
 export default App
