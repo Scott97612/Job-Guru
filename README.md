@@ -8,6 +8,6 @@ Helps you write CV/Resume and Cover Letter with LLMs based on materials user pro
 
 ## How to use
 
-I have attempted to host it on AWS, visit it at: 
+I have hosted it on AWS, visit it at: 
 
 https://jobguru.life
