@@ -8,32 +8,6 @@ Helps you write CV/Resume and Cover Letter with LLMs based on materials user pro
 
 ## How to use
 
-This app uses tesseract for image2text extraction. In order to use this feature, you have to first install tesseract to use screenshot as input. If you don't use screenshot as input, no need to install it, the app should work without issues.
+I have attempted to host it on AWS, visit it at: 
 
-For MacOS, better use Homebrew: `brew install tesseract`
-
-For Ubuntu: `sudo apt install tesseract-ocr`
-
-For Windows: check here https://tesseract-ocr.github.io/tessdoc/Downloads.html
-
-`cd py_backend`
-
-`pip install -r requirements.txt`
-
-`python server.py`
-
-To run the backend Python Flask server.
-
----
-
-`cd Job-Guru`
-
-`npm install`
-
-`npm run dev`
-
-To run the frontend React app.
-
----
-
-Feel free to alter the sys_instruction.txt to improve the LLM inference results.
+https://jobguru.life
