@@ -1,10 +1,6 @@
 # Job Guru
 
-Helps you write CV/Resume and Cover Letter with LLMs based on materials user provided such as personal profile, job descriptions, company, and other tailored user requests.
-
-## What it looks like (Demo video)
-
-[![Demo](https://drive.google.com/uc?export=download&id=1ZWudt4dGl3UcPH00ppbw2TOe6b7Fd9-b)](https://www.youtube.com/watch?v=W23KJC85ki8)
+Helps you write CV/Resume and Cover Letter with LLMs based on materials user provided such as personal profile, job descriptions, company, and other tailored user requests, and highlight the keyword matches between the wtitten CV or cover letter and the original job description.
 
 ## How to use
 
